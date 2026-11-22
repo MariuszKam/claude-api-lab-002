@@ -9,19 +9,84 @@ This repository will grow incrementally through small Trello tickets. We use the
 - Java 25
 - Gradle (wrapper 9.6.0)
 - Anthropic Java SDK `com.anthropic:anthropic-java:3.12.0`
-- JUnit Jupiter for future exercises
+- JUnit Jupiter and MockWebServer for local SDK tests
 
-## Run locally
+## Uruchomienie z czystego repozytorium
 
-On Windows:
+Wymagania: Git, zainstalowany **JDK 25** oraz `JAVA_HOME` wskazujący ten JDK
+(lub `java` dostępne w `PATH`). Używaj dołączonego Gradle Wrappera;
+nie musisz instalować Gradle osobno. Poniższe komendy są dla PowerShell na Windows.
+
+```powershell
+git clone https://github.com/MariuszKam/claude-api-lab-002.git
+cd claude-api-lab-002
+java -version
+```
+
+### Pierwsze uruchomienie — przygotowanie cache
+
+Na komputerze bez cache potrzebny jest jednorazowo dostęp do internetu,
+aby Wrapper pobrał Gradle, a Gradle pobrał zależności z Maven Central.
+Uruchom:
 
 ```powershell
 .\gradlew.bat build
-.\gradlew.bat test
-.\gradlew.bat run
 ```
 
-No API key is needed for the Gradle build or tests. The SDK test sends a request only to a local HTTP mock. `Main` prints instructions and does not read credentials or make HTTP requests.
+`build` kompiluje kod, tworzy dystrybucje aplikacji i uruchamia testy.
+Już na tym etapie test SDK komunikuje się wyłącznie z lokalnym mockiem;
+pobieranie narzędzi i zależności nie jest wywołaniem API Anthropic.
+
+### Kolejne uruchomienia — bez pobierania zależności
+
+Po przygotowaniu cache:
+
+```powershell
+.\gradlew.bat test --offline --rerun-tasks
+.\gradlew.bat build --offline
+.\gradlew.bat run --offline
+```
+
+- `test` uruchamia testy JUnit, w tym test SDK z lokalnym MockWebServer.
+  `--rerun-tasks` wymusza wykonanie także wtedy, gdy Gradle uzna poprzednie wyniki za aktualne.
+- `build` wykonuje pełny build wraz z testami; aktualne zadania mogą zostać pominięte.
+- `run` uruchamia `Main`, który tylko wypisuje nazwę laboratorium i instrukcję testowania.
+  Nie wysyła żądań HTTP.
+
+**Prawdziwy klucz API nie jest wymagany** do żadnej z powyższych komend.
+Nie trzeba ustawiać `ANTHROPIC_API_KEY`, tworzyć `.env` ani posiadać konta Anthropic.
+Test SDK sam ustawia fikcyjny klucz i lokalny `baseUrl`.
+
+Świeży klon bez cache nie wystarcza do uruchomienia całkowicie bez internetu.
+Jeśli środowisko musi być odłączone od sieci od początku, wcześniej zapewnij
+JDK 25, dystrybucję Wrappera i komplet zależności w cache Gradle.
+Samo `--offline` nie dostarcza brakujących plików; Wrapper może próbować pobrać
+własną dystrybucję jeszcze przed uruchomieniem Gradle.
+
+Raport z rzeczywistego wykonania testów znajdziesz w `build/reports/tests/test/index.html`.
+README nie podaje przykładowego wyniku jako dowodu wykonania testów.
+
+### Przyszły tryb LIVE — warunki wdrożenia
+
+**Tryb LIVE nie jest obecnie zaimplementowany.** Poniższe punkty są wymaganiami
+przyszłej implementacji, a nie instrukcją uruchomienia istniejącej funkcji:
+
+- Wywołanie API będzie wymagało jawnego włączenia LIVE. Samo ustawienie klucza
+  nie może uruchamiać połączeń ani zmieniać domyślnego lokalnego trybu testów.
+- Klucz będzie przekazywany poza repozytorium, np. przez `ANTHROPIC_API_KEY`
+  lub magazyn sekretów CI. Nie wolno zapisywać go w kodzie, logach ani commitach.
+  Brak klucza przy żądaniu LIVE powinien dawać czytelny błąd przed połączeniem.
+- Potrzebne będą dostęp do API Anthropic, uprawnienia do wybranego modelu
+  i środki na ewentualne koszty. Nazwa `offline-test-model` służy tylko mockowi.
+- Implementacja będzie musiała jawnie określić docelowy adres HTTPS API,
+  model, limit tokenów, timeout oraz zasady ponowień i obsługi błędów.
+- Testy LIVE będą oddzielone od domyślnych `test` i `build`, również w CI.
+  Zwykłe testy zachowają fikcyjny klucz i lokalny mock.
+- Wyniki LIVE będzie można dokumentować dopiero po rzeczywistym wykonaniu,
+  bez ujawniania sekretów. W ramach tego laboratorium nie wykonujemy wywołań LIVE.
+
+Konfigurację klienta opisuje [dokumentacja Java SDK](https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/java),
+a parametry żądania opisuje [Messages API](https://platform.claude.com/docs/en/api/java/messages/create).
 
 Never commit API keys or secrets. LAB 001 remains a separate record of the hand-written HTTP approach.
 
@@ -92,6 +157,8 @@ Edukacyjny warunek ukończenia pozostaje do samodzielnego potwierdzenia:
 - Dlaczego fikcyjny klucz i umowna nazwa modelu tutaj wystarczają?
 - Co dowodzi odebranie żądania przez mock, a co sprawdzają asercje odpowiedzi?
 - Dlaczego samo `--offline` nie gwarantuje lokalnego ruchu HTTP?
+- Dlaczego pierwsze uruchomienie na komputerze bez cache wymaga przygotowania zależności?
+- Dlaczego samo ustawienie klucza nie powinno w przyszłości włączać LIVE?
 
 W razie problemu pytanie do review powinno zawierać komendę uruchomienia,
 oczekiwane zachowanie, komunikat błędu i własną hipotezę przyczyny.
