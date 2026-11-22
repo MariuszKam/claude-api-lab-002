@@ -2,7 +2,11 @@
 
 Learning project for **Claude Certified Developer – Foundations** — Week 1, **Applications and Integration**.
 
-This repository will grow incrementally through small Trello tickets. We use the **official Anthropic Java SDK** rather than hand-written Messages API DTOs and HTTP transport.
+We use the **official Anthropic Java SDK** rather than hand-written Messages API DTOs and HTTP transport.
+
+**Task tracking and acceptance criteria:** [Trello CCDV-F](https://trello.com/b/9QnhiOcN/ccdv-f). The README covers the application, its configuration and how to run it; task status belongs only in Trello.
+
+Official SDK: https://github.com/anthropics/anthropic-sdk-java
 
 ## Stack
 
@@ -90,18 +94,6 @@ a parametry żądania opisuje [Messages API](https://platform.claude.com/docs/en
 
 Never commit API keys or secrets. LAB 001 remains a separate record of the hand-written HTTP approach.
 
-## Progress
-
-- [x] 1.7-01 — create separate public repository
-- [x] 1.7-02 — initialize Java/Gradle with Anthropic SDK (build and dependency smoke test passed)
-- [ ] 1.7-03 — secure API key configuration
-- [ ] 1.7-04 — initialize Anthropic SDK client
-- [ ] 1.1-01 — build first Messages API request
-
-Tracking: [Trello CCDV-F](https://trello.com/b/9QnhiOcN/ccdv-f)
-
-Official SDK: https://github.com/anthropics/anthropic-sdk-java
-
 ## LAB 002 — lokalny test Anthropic Java SDK
 
 Test: `src/test/java/dev/claudefoundations/lab/OfflineMessagesTest.java`.
@@ -148,22 +140,7 @@ Przepływ: **JUnit → SDK → HTTP na loopback → MockWebServer → JSON → M
 Test weryfikuje konfigurację i transport SDK oraz odczyt odpowiedzi. Nie sprawdza
 poprawności prawdziwego klucza, dostępności modelu ani jakości jego odpowiedzi.
 
-### Samodzielne wyjaśnienie i review
-
-Część techniczna jest gotowa, gdy test przechodzi i mock odbiera oczekiwane żądanie.
-Edukacyjny warunek ukończenia pozostaje do samodzielnego potwierdzenia:
-
-- Skąd SDK wie, na jaki adres wysłać żądanie?
-- Dlaczego fikcyjny klucz i umowna nazwa modelu tutaj wystarczają?
-- Co dowodzi odebranie żądania przez mock, a co sprawdzają asercje odpowiedzi?
-- Dlaczego samo `--offline` nie gwarantuje lokalnego ruchu HTTP?
-- Dlaczego pierwsze uruchomienie na komputerze bez cache wymaga przygotowania zależności?
-- Dlaczego samo ustawienie klucza nie powinno w przyszłości włączać LIVE?
-
-W razie problemu pytanie do review powinno zawierać komendę uruchomienia,
-oczekiwane zachowanie, komunikat błędu i własną hipotezę przyczyny.
-
-Źródła:
+### Źródła
 
 - [Konfiguracja Anthropic Java SDK](https://platform.claude.com/docs/en/cli-sdks-libraries/sdks/java)
 - [Messages API](https://platform.claude.com/docs/en/api/java/messages/create)
