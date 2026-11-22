@@ -1,9 +1,14 @@
 plugins {
     java
+    application
 }
 
 group = "dev.claudefoundations"
 version = "0.1.0"
+
+application {
+    mainClass = "dev.claudefoundations.lab.Main"
+}
 
 repositories {
     mavenCentral()

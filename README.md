@@ -18,6 +18,7 @@ On Windows:
 ```powershell
 .\gradlew.bat build
 .\gradlew.bat test
+.\gradlew.bat run
 ```
 
 No API key is needed for the Gradle build. **No request to Claude is implemented yet.** Future lab tickets will introduce SDK request builders, local HTTP mocks, response processing, and eventually optional live calls.
