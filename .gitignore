@@ -1,0 +1,14 @@
+# Gradle and Java
+.gradle/
+build/
+out/
+*.class
+
+# IDE
+.idea/
+*.iml
+
+# Credentials
+.env
+.env.*
+!.env.example
